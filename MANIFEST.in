@@ -1,0 +1,10 @@
+include AUTHORS
+include Changelog
+include INSTALL
+include LICENSE
+include MANIFEST.in
+include README.rst
+include README
+include setup.cfg
+recursive-include literal *.py
+recursive-include examples *.py
