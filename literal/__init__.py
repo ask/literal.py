@@ -1,4 +1,14 @@
+"""Python code generation tool."""
 from __future__ import absolute_import
+
+VERSION = (0, 0, 1)
+__version__ = ".".join(map(str, VERSION[0:3])) + "".join(VERSION[3:])
+__author__ = "Ask Solem"
+__contact__ = "ask@celeryproject.org"
+__homepage__ = "http://github.com/ask/literal.py/"
+__docformat__ = "restructuredtext en"
+
+# -eof meta-
 
 from inspect import getargspec
 from itertools import imap
@@ -52,6 +62,7 @@ def textindent(s, n=4):
 def reprkwargs(kwargs, sep=', ', fmt="{0!s}={1!r}"):
     """Display kwargs."""
     return sep.join(fmt.format(k, v) for k, v in kwargs.iteritems())
+
 
 def reprargs(args, sep=', ', filter=repr):
     return sep.join((map(filter, args)))
@@ -192,8 +203,8 @@ class node(_node):
     def wrap(self, prefix=None, suffix=None):
         return self.maybe_replace(
                 self._new_node((prefix or '')
-                            +  get_value(self)
-                            +  (suffix or '')))
+                             + get_value(self)
+                             + (suffix or '')))
 
     def group(self):
         return self.wrap('(', ')')
@@ -223,9 +234,19 @@ class node(_node):
     def value(self):
         return unicode(self)
 
-    @value.setter
+    @value.setter            # noqa
     def value(self, value):
         self.s = value
+
+
+class _v(object):
+    """``root.v.foo`` == ``root.var('foo')``"""
+
+    def __init__(self, root):
+        self.root = root
+
+    def __getattr__(self, name):
+        return self.root.var(name)
 
 
 class root(_node):
@@ -234,6 +255,7 @@ class root(_node):
         self.root = self
         self.leaf = node
         self.next = []
+        self.v = _v(self)
 
     def add(self, n):
         if n != self and not isinstance(n, symbol):
@@ -246,8 +268,10 @@ class root(_node):
     def tuple(self, *values):
         return self.symbol(', '.join(map(get_value, values)))
 
-    def as_fun(self, fun, name=None, indent=0):
-        return '\n'.join(
+    def as_fun(self, fun, name=None, indent=0, decorators=None):
+        decorators = ['@{0!s}'.format(get_value(dec))
+                        for dec in decorators or []]
+        return '\n'.join(decorators +
             [textindent('def {}:'.format(reprsig(fun, name)), indent),
              self.indent(indent + 4)])
 
@@ -326,8 +350,8 @@ class root(_node):
         if not attrs or not methods:
             methods = ['pass']
         return ("class {!s}({!s}):\n".format(name, reprargs(bases))
-             +  textindent(self._format_attrs(attrs))
-             +  "\n\n" + textindent('\n\n'.join(methods or [])))
+              + textindent(self._format_attrs(attrs))
+              + "\n\n" + textindent('\n\n'.join(methods or [])))
 
     def format(self, *args, **kwargs):
         return unicode(self).format(*args, **kwargs)
@@ -352,7 +376,7 @@ class symbol(node):
     def value(self):
         return self.name
 
-    @value.setter
+    @value.setter            # noqa
     def value(self, value):
         self.name = value
 
@@ -387,15 +411,8 @@ def get_value(n):
         return unicode(n)
     return n
 
-def c():
-    @ly
-    def cc(a, b, c):
-        return a.type('foo')
-
-    return cc()
 
 if __name__ == "__main__":
-
 
     @ly
     def play(x, payload, offset, unpack_from):
@@ -405,10 +422,9 @@ if __name__ == "__main__":
 
     x = ly()
     print(x.type('foo', attrs={'x': 30}, methods=[
-            play().as_fun(lambda self, payload, offset: 1, 'encode')]
+            play().as_fun(lambda self, payload, offset: 1, 'encode')],
     ))
 
     @ly
     def b(bool, mandatory, immediate):
         bool(mandatory) | bool(immediate)
-
