@@ -414,17 +414,17 @@ def get_value(n):
 
 if __name__ == "__main__":
 
-    @ly
+    @py
     def play(x, payload, offset, unpack_from):
         x <<= offset[0 + 10:30]
         payload <<= x[x + 10:]
         x.frobulate.the().query.machine(30, a=10)
 
-    x = ly()
+    x = py()
     print(x.type('foo', attrs={'x': 30}, methods=[
             play().as_fun(lambda self, payload, offset: 1, 'encode')],
     ))
 
-    @ly
+    @py
     def b(bool, mandatory, immediate):
         bool(mandatory) | bool(immediate)

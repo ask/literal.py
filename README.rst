@@ -9,7 +9,7 @@ Synopsis
 
 Literal is a fun weekend project to create a way to generate python
 code with Python code.  Instead of having string literals of Python
-code, you use ``literal.ly`` objects that remembers the operations
+code, you use ``literal.py`` objects that remembers the operations
 done to them, and the history of operations is the resulting
 Python program.
 
@@ -98,7 +98,7 @@ More documentation to come.
 Installation
 ============
 
-You can install `litera.py` either via the Python Package Index (PyPI)
+You can install `literal` either via the Python Package Index (PyPI)
 or from source.
 
 To install using `pip`,::
