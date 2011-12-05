@@ -101,7 +101,7 @@ else:
     long_description = "See http://pypi.python.org/pypi/literal"
 
 setup(
-    name='literal',
+    name="literal",
     version=meta["VERSION"],
     description=meta["doc"],
     author=meta["author"],
